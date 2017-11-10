@@ -1462,7 +1462,7 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 	fmt.Println(tx_root.Hex())
 	fmt.Println(receipt)
 	rlp.Encode(keybuf, uint(receipt_idx))
-	proof := t.Prove(keybuf.Bytes())
+	proof := t.Prove_old(keybuf.Bytes())
 	enc,_ := rlp.EncodeToBytes(proof)
 
 	return enc
