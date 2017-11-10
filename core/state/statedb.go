@@ -605,3 +605,8 @@ func (s *StateDB) CommitTo(dbw trie.DatabaseWriter, deleteEmptyObjects bool) (ro
 	log.Debug("Trie cache stats after commit", "misses", trie.CacheMisses(), "unloads", trie.CacheUnloads())
 	return root, err
 }
+
+// Return the Trie and Database
+func(self *StateDB) GetTrie() (trie.SecureTrie){
+	return self.trie.(cachedTrie).GetTrie()
+}

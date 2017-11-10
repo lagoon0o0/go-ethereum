@@ -152,3 +152,7 @@ func (m cachedTrie) CommitTo(dbw trie.DatabaseWriter) (common.Hash, error) {
 	}
 	return root, err
 }
+
+func (m cachedTrie) GetTrie() (trie.SecureTrie) {
+	return *m.SecureTrie.Copy()
+}

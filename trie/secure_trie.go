@@ -21,6 +21,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 var secureKeyPrefix = []byte("secure-key-")
@@ -215,4 +216,16 @@ func (t *SecureTrie) getSecKeyCache() map[string][]byte {
 		t.secKeyCache = make(map[string][]byte)
 	}
 	return t.secKeyCache
+}
+
+func (t SecureTrie) GetTrie () (Trie){
+	return t.trie
+}
+
+func (t *SecureTrie) GetProof(key []byte) []rlp.RawValue {
+	return t.trie.Prove_old(t.hashKey(key))
+}
+
+func (t *SecureTrie) VerifyProof(key []byte, proof []rlp.RawValue) (value []byte, err error) {
+	return VerifyProof_old(t.Hash(), t.hashKey(key), proof)
 }
