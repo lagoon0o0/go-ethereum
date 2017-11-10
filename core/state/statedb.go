@@ -610,3 +610,7 @@ func (s *StateDB) CommitTo(dbw trie.DatabaseWriter, deleteEmptyObjects bool) (ro
 func(self *StateDB) GetTrie() (trie.SecureTrie){
 	return self.trie.(cachedTrie).GetTrie()
 }
+
+func (self *StateDB) GetStorageSecureTrie(a common.Address) (trie.SecureTrie) {
+	return *self.StorageTrie(a).(*trie.SecureTrie)
+}
