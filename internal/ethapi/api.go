@@ -1434,7 +1434,7 @@ func (s *PublicExchAPI) GetAccountProof(
 
 // GetReceiptProof returns the transaction receipt merkle proof for the given transaction hash.
 func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
-	tx, blockHash, _, _ := core.GetTransaction(s.b.ChainDb(), hash)
+	tx, blockHash, blockNumber, index := core.GetTransaction(s.b.ChainDb(), hash)
 	if tx == nil {
 		return nil
 	}
@@ -1458,9 +1458,44 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 		rlp.Encode(keybuf, uint(i))
 		t.Update(keybuf.Bytes(), receipt_list.GetRlp(i))
 	}
-	tx_root := t.Hash()
-	fmt.Println(tx_root.Hex())
-	fmt.Println(receipt)
+	//tx_root := t.Hash()
+
+	var signer types.Signer = types.FrontierSigner{}
+	if tx.Protected() {
+		signer = types.NewEIP155Signer(tx.ChainId())
+	}
+	from, _ := types.Sender(signer, tx)
+
+	fields := map[string]interface{}{
+		"blockHash":         blockHash,
+		"blockNumber":       hexutil.Uint64(blockNumber),
+		"transactionHash":   hash,
+		"transactionIndex":  hexutil.Uint64(index),
+		"from":              from,
+		"to":                tx.To(),
+		"gasUsed":           (*hexutil.Big)(receipt.GasUsed),
+		"cumulativeGasUsed": (*hexutil.Big)(receipt.CumulativeGasUsed),
+		"contractAddress":   nil,
+		"logs":              receipt.Logs,
+		"logsBloom":         receipt.Bloom,
+	}
+
+	// Assign receipt status or post state.
+	if len(receipt.PostState) > 0 {
+		fields["root"] = hexutil.Bytes(receipt.PostState)
+	} else {
+		fields["status"] = hexutil.Uint(receipt.Status)
+	}
+	if receipt.Logs == nil {
+		fields["logs"] = [][]*types.Log{}
+	}
+	// If the ContractAddress is 20 0x0 bytes, assume it is not a contract creation
+	if receipt.ContractAddress != (common.Address{}) {
+		fields["contractAddress"] = receipt.ContractAddress
+	}
+
+	fmt.Println(fields)
+
 	rlp.Encode(keybuf, uint(receipt_idx))
 	proof := t.Prove_old(keybuf.Bytes())
 	enc,_ := rlp.EncodeToBytes(proof)
