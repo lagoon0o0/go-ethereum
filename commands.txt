@@ -4,8 +4,16 @@
 
 curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getHeaderByNumber","params":["0x40D990"],"id":1}' http://ec2-52-54-149-188.compute-1.amazonaws.com:1234
 
-curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getHeaderByNumber","params":["0x40D990"],"id":1}' http://94.130.38.179.amazonaws.com:1234
-
 curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getAccountProof","params":["0x40D990","0x8d12A197cB00D4747a1fe03395095ce2A5CC6819","0xBc69eCC478d4C1722A7151E43E2A78CCD0D5D5fB","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000006"],"id":1}' http://ec2-52-54-149-188.compute-1.amazonaws.com:1234
 
+curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getReceiptProof","params":["0x93cbad7a82e339dc055a6d42be5fb04e2ba585a9181c9358fee3498581485fcc"],"id":1}' http://ec2-52-54-149-188.compute-1.amazonaws.com:1234
+
+
+curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getHeaderByNumber","params":["0x40D990"],"id":1}' http://94.130.38.179:1234
+
 curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getAccountProof","params":["0x40D990","0x8d12A197cB00D4747a1fe03395095ce2A5CC6819","0xBc69eCC478d4C1722A7151E43E2A78CCD0D5D5fB","0x0000000000000000000000000000000000000000","0x0000000000000000000000000000000000000006"],"id":1}' http://94.130.38.179:1234
+
+curl -H "Content-Type: application/json" -X POST --data '{"jsonrpc":"2.0","method":"exch_getReceiptProof","params":["0x93cbad7a82e339dc055a6d42be5fb04e2ba585a9181c9358fee3498581485fcc"],"id":1}' http://94.130.38.179:1234
+
+
+

@@ -41,6 +41,8 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
+	"bytes"
+	"github.com/ethereum/go-ethereum/trie"
 )
 
 const (
@@ -1427,5 +1429,41 @@ func (s *PublicExchAPI) GetAccountProof(
 		common.Hex2BytesFixed(token.Hex(), 32),
 		common.Hex2BytesFixed(pos.Hex(), 32)}
 	enc, _ := rlp.EncodeToBytes(ret)
+	return enc
+}
+
+// GetReceiptProof returns the transaction receipt merkle proof for the given transaction hash.
+func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
+	tx, blockHash, _, _ := core.GetTransaction(s.b.ChainDb(), hash)
+	if tx == nil {
+		return nil
+	}
+	receipt, _, _, _ := core.GetReceipt(s.b.ChainDb(), hash) // Old receipts don't have the lookup data available
+
+	receipt_list, _ := s.b.GetReceipts(context.Background(), blockHash)
+
+	receipt_idx := -1
+	for idx , rec := range receipt_list {
+		if rec.TxHash == receipt.TxHash {
+			receipt_idx = idx
+		}
+	}
+	if receipt_idx == -1 {
+		return nil
+	}
+	keybuf := new(bytes.Buffer)
+	t := new(trie.Trie)
+	for i := 0; i < receipt_list.Len(); i++ {
+		keybuf.Reset()
+		rlp.Encode(keybuf, uint(i))
+		t.Update(keybuf.Bytes(), receipt_list.GetRlp(i))
+	}
+	tx_root := t.Hash()
+	fmt.Println(tx_root.Hex())
+	fmt.Println(receipt)
+	rlp.Encode(keybuf, uint(receipt_idx))
+	proof := t.Prove(keybuf.Bytes())
+	enc,_ := rlp.EncodeToBytes(proof)
+
 	return enc
 }
