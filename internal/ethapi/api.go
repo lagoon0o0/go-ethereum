@@ -1389,3 +1389,20 @@ func (s *PublicNetAPI) PeerCount() hexutil.Uint {
 func (s *PublicNetAPI) Version() string {
 	return fmt.Sprintf("%d", s.networkVersion)
 }
+
+// PublicExchAPI offers RPC methods for exchSGX
+type PublicExchAPI struct {
+	b Backend
+}
+
+// NewPublicExchAPI creates a new exchSGX API instance.
+func NewPublicExchAPI(b Backend) *PublicExchAPI {
+	return &PublicExchAPI{b}
+}
+
+// GetHeaderByNumber returns the requested header. When blockNr is -1 the chain head is returned.
+func (s *PublicExchAPI) GetHeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) hexutil.Bytes {
+	header, _ := s.b.HeaderByNumber(context.Background(), blockNr)
+	enc, _ := rlp.EncodeToBytes(header)
+	return enc
+}
