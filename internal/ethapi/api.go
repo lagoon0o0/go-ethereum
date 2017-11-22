@@ -1495,10 +1495,16 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 	}
 
 	fmt.Println(fields)
-
 	rlp.Encode(keybuf, uint(receipt_idx))
-	proof := t.Prove_old(keybuf.Bytes())
-	enc,_ := rlp.EncodeToBytes(proof)
+	receipt_proof := t.Prove_old(keybuf.Bytes())
+
+	ret := []interface{}{
+		receipt_proof,
+		uint(receipt_idx),
+		fields["blockNumber"],
+	}
+
+	enc,_ := rlp.EncodeToBytes(ret)
 
 	return enc
 }
