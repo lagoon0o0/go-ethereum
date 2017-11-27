@@ -44,6 +44,7 @@ import (
 	"bytes"
 	"github.com/ethereum/go-ethereum/trie"
 	"reflect"
+	"encoding/hex"
 )
 
 const (
@@ -1514,7 +1515,7 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 
 	fmt.Println(trie.VerifyProof_old(t.Hash(), key, receipt_proof))
 
-	fmt.Println("The key: ", key)
+	fmt.Println("The key: ", hex.EncodeToString(key))
 	fmt.Println("The proof: ")
 	for _, node := range receipt_proof {
 		Pretty_print("encoded node: ",node)
@@ -1527,7 +1528,7 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 
 	ret := []interface{}{
 		receipt_proof,
-		uint(receipt_idx),
+		key,
 		fields["blockNumber"],
 	}
 
