@@ -1507,14 +1507,14 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 	}
 
 	//fmt.Println(fields)
-	rlp.Encode(keybuf, uint(receipt_idx))
-	receipt_proof := t.Prove_old(keybuf.Bytes())
 
 	rlp.Encode(keybuf, uint(receipt_idx))
-	fmt.Println(trie.VerifyProof_old(t.Hash(), keybuf.Bytes(), receipt_proof))
+	key := keybuf.Bytes()
+	receipt_proof := t.Prove_old(key)
 
-	rlp.Encode(keybuf, uint(receipt_idx))
-	fmt.Println("The key: ", keybuf.Bytes())
+	fmt.Println(trie.VerifyProof_old(t.Hash(), key, receipt_proof))
+
+	fmt.Println("The key: ", key)
 	fmt.Println("The proof: ")
 	for _, node := range receipt_proof {
 		Pretty_print("encoded node: ",node)
