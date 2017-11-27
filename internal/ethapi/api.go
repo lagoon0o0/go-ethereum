@@ -1508,9 +1508,10 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 	}
 
 	//fmt.Println(fields)
-
+	keybuf.Reset()
 	rlp.Encode(keybuf, uint(receipt_idx))
 	key := keybuf.Bytes()
+
 	receipt_proof := t.Prove_old(key)
 
 	fmt.Println(trie.VerifyProof_old(t.Hash(), key, receipt_proof))
