@@ -43,6 +43,7 @@ import (
 	"github.com/syndtr/goleveldb/leveldb/util"
 	"bytes"
 	"github.com/ethereum/go-ethereum/trie"
+	"reflect"
 )
 
 const (
@@ -1432,6 +1433,17 @@ func (s *PublicExchAPI) GetAccountProof(
 	return enc
 }
 
+func Pretty_print(str string, arr interface{} ) {
+	if reflect.TypeOf(arr).Kind() == reflect.Slice {
+		t := reflect.ValueOf(arr)
+		fmt.Println(str, t.Len(), arr)
+		for i := 0; i < t.Len(); i++ {
+			fmt.Printf("%x ",t.Index(i))
+		}
+		fmt.Println("")
+	}
+
+}
 // GetReceiptProof returns the transaction receipt merkle proof for the given transaction hash.
 func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 	tx, blockHash, blockNumber, index := core.GetTransaction(s.b.ChainDb(), hash)
@@ -1494,9 +1506,21 @@ func (s *PublicExchAPI) GetReceiptProof(hash common.Hash) hexutil.Bytes {
 		fields["contractAddress"] = receipt.ContractAddress
 	}
 
-	fmt.Println(fields)
+	//fmt.Println(fields)
 	rlp.Encode(keybuf, uint(receipt_idx))
 	receipt_proof := t.Prove_old(keybuf.Bytes())
+
+	fmt.Println(trie.VerifyProof_old(t.Hash(), keybuf.Bytes(), receipt_proof))
+	
+	fmt.Println("The proof: ")
+	for _, node := range receipt_proof {
+		Pretty_print("encoded node: ",node)
+		fmt.Println("Hash:",crypto.Keccak256Hash(node).Hex())
+		r := bytes.NewReader(node)
+		decoded := new([][]byte)
+		_ = rlp.Decode(r, &decoded)
+		Pretty_print("decoded node: ", *decoded)
+	}
 
 	ret := []interface{}{
 		receipt_proof,
