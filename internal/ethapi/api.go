@@ -1412,6 +1412,7 @@ func (s *PublicExchAPI) GetHeaderByNumber(ctx context.Context, blockNr rpc.Block
 }
 
 func (s *PublicExchAPI) GetAccountProof(
+
 	blockNr rpc.BlockNumber, address common.Address, user common.Address, token common.Address, pos common.Address) hexutil.Bytes {
 
 	sta, _, _ := s.b.StateAndHeaderByNumber(context.Background(), blockNr)
@@ -1436,10 +1437,10 @@ func (s *PublicExchAPI) GetAccountProof(
 
 	storage_trie := sta.GetStorageSecureTrie(address)
 	key := crypto.Keccak256Hash(
-		common.Hex2BytesFixed(user.Hex(), 32),
+		common.Hex2BytesFixed(user.Hex()[2:], 32),
 		crypto.Keccak256Hash(
-			common.Hex2BytesFixed(token.Hex(), 32),
-			common.Hex2BytesFixed(pos.Hex(), 32)).Bytes()).Bytes()
+			common.Hex2BytesFixed(token.Hex()[2:], 32),
+			common.Hex2BytesFixed(pos.Hex()[2:], 32)).Bytes()).Bytes()
 	storage_proof := storage_trie.GetProof(key)
 
 	fmt.Println("The key: ",hex.EncodeToString(key))
@@ -1452,16 +1453,17 @@ func (s *PublicExchAPI) GetAccountProof(
 		_ = rlp.Decode(r, &decoded)
 		Pretty_print("decoded node: ", *decoded)
 	}
-    fmt.Println("padded user: ",hex.EncodeToString(common.Hex2BytesFixed(user.Hex(), 32)))
-	fmt.Println("padded token: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex(), 32)))
-	fmt.Println("padded pos: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex(), 32)))
+	fmt.Println("user: ",user.Hex())
+    fmt.Println("padded user: ",hex.EncodeToString(common.Hex2BytesFixed(user.Hex()[2:], 32)))
+	fmt.Println("padded token: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex()[2:], 32)))
+	fmt.Println("padded pos: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex()[2:], 32)))
 	ret := []interface{}{
 		account_proof,
 		address.Bytes(),
 		storage_proof,
-		common.Hex2BytesFixed(user.Hex(), 32),
-		common.Hex2BytesFixed(token.Hex(), 32),
-		common.Hex2BytesFixed(pos.Hex(), 32)}
+		common.Hex2BytesFixed(user.Hex()[2:], 32),
+		common.Hex2BytesFixed(token.Hex()[2:], 32),
+		common.Hex2BytesFixed(pos.Hex()[2:], 32)}
 
 		enc, _ := rlp.EncodeToBytes(ret)
 	return enc
