@@ -1452,9 +1452,9 @@ func (s *PublicExchAPI) GetAccountProof(
 		_ = rlp.Decode(r, &decoded)
 		Pretty_print("decoded node: ", *decoded)
 	}
-    fmt.Println("padded user: ",common.Hex2BytesFixed(user.Hex(), 32))
-	fmt.Println("padded token: ",common.Hex2BytesFixed(token.Hex(), 32))
-	fmt.Println("padded pos: ",common.Hex2BytesFixed(token.Hex(), 32))
+    fmt.Println("padded user: ",hex.EncodeToString(common.Hex2BytesFixed(user.Hex(), 32)))
+	fmt.Println("padded token: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex(), 32)))
+	fmt.Println("padded pos: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex(), 32)))
 	ret := []interface{}{
 		account_proof,
 		address.Bytes(),
