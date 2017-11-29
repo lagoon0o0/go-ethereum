@@ -1455,8 +1455,10 @@ func (s *PublicExchAPI) GetAccountProof(
 	}
 	fmt.Println("user: ",user.Hex())
     fmt.Println("padded user: ",hex.EncodeToString(common.Hex2BytesFixed(user.Hex()[2:], 32)))
+	fmt.Println("token: ",user.Hex())
 	fmt.Println("padded token: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex()[2:], 32)))
-	fmt.Println("padded pos: ",hex.EncodeToString(common.Hex2BytesFixed(token.Hex()[2:], 32)))
+	fmt.Println("pos: ",pos.Hex())
+	fmt.Println("padded pos: ",hex.EncodeToString(common.Hex2BytesFixed(pos.Hex()[2:], 32)))
 	ret := []interface{}{
 		account_proof,
 		address.Bytes(),
