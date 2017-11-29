@@ -1413,9 +1413,27 @@ func (s *PublicExchAPI) GetHeaderByNumber(ctx context.Context, blockNr rpc.Block
 
 func (s *PublicExchAPI) GetAccountProof(
 	blockNr rpc.BlockNumber, address common.Address, user common.Address, token common.Address, pos common.Address) hexutil.Bytes {
+
 	sta, _, _ := s.b.StateAndHeaderByNumber(context.Background(), blockNr)
 	state_trie := sta.GetTrie()
 	account_proof := state_trie.GetProof(address[:])
+
+	fmt.Println("address: ",address.Hex())
+	fmt.Println("user: ",user.Hex())
+	fmt.Println("token: ",token.Hex())
+	fmt.Println("pos: ",pos.Hex())
+
+	fmt.Println("The key: ", address.Hex())
+	fmt.Println("The proof: ")
+	for _, node := range account_proof {
+		Pretty_print("encoded node: ",node)
+		fmt.Println("Hash:",crypto.Keccak256Hash(node).Hex())
+		r := bytes.NewReader(node)
+		decoded := new([][]byte)
+		_ = rlp.Decode(r, &decoded)
+		Pretty_print("decoded node: ", *decoded)
+	}
+
 	storage_trie := sta.GetStorageSecureTrie(address)
 	key := crypto.Keccak256Hash(
 		common.Hex2BytesFixed(user.Hex(), 32),
