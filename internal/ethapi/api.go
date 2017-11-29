@@ -1424,7 +1424,7 @@ func (s *PublicExchAPI) GetAccountProof(
 	fmt.Println("pos: ",pos.Hex())
 
 	fmt.Println("The key: ", address.Hex())
-	fmt.Println("The proof: ")
+	fmt.Println("The account proof: ")
 	for _, node := range account_proof {
 		Pretty_print("encoded node: ",node)
 		fmt.Println("Hash:",crypto.Keccak256Hash(node).Hex())
@@ -1441,6 +1441,20 @@ func (s *PublicExchAPI) GetAccountProof(
 			common.Hex2BytesFixed(token.Hex(), 32),
 			common.Hex2BytesFixed(pos.Hex(), 32)).Bytes()).Bytes()
 	storage_proof := storage_trie.GetProof(key)
+
+	fmt.Println("The key: ",hex.EncodeToString(key))
+	fmt.Println("The storage proof: ")
+	for _, node := range storage_proof {
+		Pretty_print("encoded node: ",node)
+		fmt.Println("Hash:",crypto.Keccak256Hash(node).Hex())
+		r := bytes.NewReader(node)
+		decoded := new([][]byte)
+		_ = rlp.Decode(r, &decoded)
+		Pretty_print("decoded node: ", *decoded)
+	}
+    fmt.Println("padded user: ",common.Hex2BytesFixed(user.Hex(), 32))
+	fmt.Println("padded token: ",common.Hex2BytesFixed(token.Hex(), 32))
+	fmt.Println("padded pos: ",common.Hex2BytesFixed(token.Hex(), 32))
 	ret := []interface{}{
 		account_proof,
 		address.Bytes(),
@@ -1448,7 +1462,8 @@ func (s *PublicExchAPI) GetAccountProof(
 		common.Hex2BytesFixed(user.Hex(), 32),
 		common.Hex2BytesFixed(token.Hex(), 32),
 		common.Hex2BytesFixed(pos.Hex(), 32)}
-	enc, _ := rlp.EncodeToBytes(ret)
+
+		enc, _ := rlp.EncodeToBytes(ret)
 	return enc
 }
 
