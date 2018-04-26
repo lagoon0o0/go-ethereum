@@ -1,3 +1,6 @@
 [submodule "tests"]
 	path = tests/testdata
 	url = https://github.com/ethereum/tests
+[submodule "setup_privatechain/eth-utils"]
+	path = setup_privatechain/eth-utils
+	url = git@github.com:lagoon0o0/eth-utils.git
